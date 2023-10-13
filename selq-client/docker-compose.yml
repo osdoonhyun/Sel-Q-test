@@ -1,0 +1,76 @@
+# version: '3'
+
+# services:
+#   react-app:
+#     stdin_open: true
+#     tty: true
+#     build:
+#       context: ./selq-client
+#       dockerfile: Dockerfile
+#     ports:
+#       - '9000:3000'
+
+#     volumes:
+#       - ./selq-client/src:/selq-client/app/src:ro
+#     env_file:
+#       - ./selq-client/.env
+#     networks:
+#       - selq_networks
+
+#   nginx:
+#     depends_on:
+#       - react-app
+#     build:
+#       context: nginx
+#     container_name: nginx
+#     restart: always
+#     tty: true
+#     ports:
+#       - '80:80'
+#     networks:
+#       - selq_networks
+
+# networks:
+#   selq_networks:
+#     driver: bridge
+
+#   # 1:1은 depends on network는 다대다
+# networks:
+# selq_networks:
+# driver: bridge
+
+version: '3'
+
+services:
+  react-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: react-app
+    networks:
+      - node-network
+    volumes:
+      - ./react:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - '3000:3000'
+
+  nginx:
+    build:
+      context: nginx
+    container_name: nginx
+    restart: always
+    ports:
+      - '80:80'
+      - '443:443'
+    networks:
+      - node-network
+    depends_on:
+      - react-app
+    volumes:
+      - ./cert/cert.pem:/etc/nginx/cert/cert.pem
+      - ./cert/key.pem:/etc/nginx/cert/key.pem
+
+networks:
+  node-network:
+    driver: bridge
