@@ -27,7 +27,12 @@ async function bootstrap() {
 
   app.enableCors({
     // origin: configService.get('FRONTEND_URL'),
-    origin: '*',
+    // origin: '*',
+    origin: [
+      configService.get('FRONTEND_URL'),
+      'http://localhost:3000',
+      'http://localhost:80',
+    ],
     credentials: true,
   });
   app.use(cookieParser());
