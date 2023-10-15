@@ -27,14 +27,18 @@ async function bootstrap() {
 
   app.enableCors({
     // origin: configService.get('FRONTEND_URL'),
-    // origin: '*',
-    origin: [
-      configService.get('FRONTEND_URL'),
-      'http://localhost:3000',
-      'http://localhost:80',
-      'https://seql.store',
-      'http://seql.store:3000',
-    ],
+    origin: '*',
+    // origin: [
+    //   configService.get('FRONTEND_URL'),
+    //   'http://localhost:3000',
+    //   'http://localhost:80',
+    //   'https://seql.store',
+    //   'http://seql.store:3000',
+    //   'http://seql.store:3000',
+    //   'http://seql.store:3000',
+    //   'http://seql.store:3000',
+    //   'http://seql.store:3000',
+    // ],
     credentials: true,
   });
   app.use(cookieParser());
