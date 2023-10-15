@@ -32,6 +32,8 @@ async function bootstrap() {
       configService.get('FRONTEND_URL'),
       'http://localhost:3000',
       'http://localhost:80',
+      'https://seql.store',
+      'http://seql.store:3000',
     ],
     credentials: true,
   });
