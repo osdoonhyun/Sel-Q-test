@@ -42,12 +42,12 @@
 version: '3'
 
 services:
-  react-app:
+  react-app-1:
     build:
-      context: ./selq-client
+      context: selq-client
       # context: .
       dockerfile: Dockerfile
-    container_name: react-app
+    container_name: react-app-1
     networks:
       - selq-network
     # volumes:
@@ -57,6 +57,72 @@ services:
       - '3000:3000'
     # depends_on:
     #   - react-app-backend
+
+  react-app-2:
+    build:
+      context: selq-client
+      # context: .
+      dockerfile: Dockerfile
+    container_name: react-app-2
+    networks:
+      - selq-network
+    # volumes:
+    #   - ./react:/usr/src/app
+    #   - /usr/src/app/node_modules
+    ports:
+      - '3001:3000'
+    # depends_on:
+    #   - react-app-backend
+
+  react-app-3:
+    build:
+      context: selq-client
+      # context: .
+      dockerfile: Dockerfile
+    container_name: react-app-3
+    networks:
+      - selq-network
+    # volumes:
+    #   - ./react:/usr/src/app
+    #   - /usr/src/app/node_modules
+    ports:
+      - '3002:3000'
+    # depends_on:
+    #   - react-app-backend
+
+  react-app-4:
+    build:
+      context: selq-client
+      # context: .
+      dockerfile: Dockerfile
+    container_name: react-app-4
+    networks:
+      - selq-network
+    # volumes:
+    #   - ./react:/usr/src/app
+    #   - /usr/src/app/node_modules
+    ports:
+      - '3003:3000'
+    # depends_on:
+    #   - react-app-backend
+
+  react-app-backend:
+    build:
+      context: selq-server
+      dockerfile: Dockerfile
+      target: development
+
+    volumes:
+      - ./selq-server:/usr/src/app
+    env_file:
+      - ./selq-server/.env
+    command: npm run start:dev
+    ports:
+      #      - ${BACKEND_PORT}:${BACKEND_PORT}
+      # - 443:443
+      - '8000:8000'
+    networks:
+      - selq-network
 
   # react-app-backend:
   #   build:
@@ -71,22 +137,45 @@ services:
   #   ports:
   #     - '8000:8000'
 
+  # nginx:
+  #   build:
+  #     context: nginx
+  #   container_name: nginx
+  #   restart: always
+  #   ports:
+  #     - '80:80'
+  #     # - '443:443'
+  #   networks:
+  #     - selq-network
+  #   depends_on:
+  #     - react-app-1
+  #     - react-app-2
+  #     - react-app-3
+  #     - react-app-4
+  # - react-app-backend
+  # volumes:
+  #   - ./cert/cert.pem:/etc/nginx/cert/cert.pem
+  #   - ./cert/key.pem:/etc/nginx/cert/key.pem
   nginx:
-    build:
-      context: nginx
+    image: nginx:latest
     container_name: nginx
-    restart: always
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
     ports:
-      - '80:80'
-      # - '443:443'
+      - 80:80
+    command: /bin/sh -c "nginx -g 'daemon off;'"
+    depends_on:
+      - react-app-1
+      - react-app-2
+      - react-app-3
+      - react-app-4
+      # - react-app-backend
+      # api-prod:
+      #   condition: service_healthy
+      # app-prod:
+      #   condition: service_started
     networks:
       - selq-network
-    depends_on:
-      - react-app
-      # - react-app-backend
-    # volumes:
-    #   - ./cert/cert.pem:/etc/nginx/cert/cert.pem
-    #   - ./cert/key.pem:/etc/nginx/cert/key.pem
 
 networks:
   selq-network:

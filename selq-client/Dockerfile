@@ -1,6 +1,6 @@
-FROM node:14
+FROM node:14-alpine as development
 
-WORKDIR /selq-client/app
+WORKDIR /app
 
 COPY package.json .
 
