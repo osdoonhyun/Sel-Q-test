@@ -2,7 +2,8 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 
 const serverApi = axios.create({
-  baseURL: 'http://localhost:8000/api',
+  baseURL: 'http://selq.store/api',
+  // baseURL: 'http://localhost:8000/api',
   withCredentials: true,
 });
 
