@@ -7,7 +7,7 @@ import { BaseAPIDocument } from '@root/appconfig/swagger.document';
 import * as cookieParser from 'cookie-parser';
 import { TransformInterceptor } from '@root/common/interfaces/transform.interceptor';
 import { HttpExceptionFilter } from '@root/common/filters/http-exception.filter';
-import * as fs from 'fs';
+// import * as fs from 'fs';
 
 async function bootstrap() {
   // const customLogger = new CustomLogger();
@@ -15,12 +15,13 @@ async function bootstrap() {
   //   logger: WinstonModule.createLogger(customLogger.createLoggerConfig),
   // });
 
-  const httpsOptions = {
-    key: fs.readFileSync('./cert/cert.pem'),
-    cert: fs.readFileSync('./cert/key.pem'),
-  };
+  // const httpsOptions = {
+  //   key: fs.readFileSync('./cert/cert.pem'),
+  //   cert: fs.readFileSync('./cert/key.pem'),
+  // };
 
-  const app = await NestFactory.create(AppModule, { httpsOptions });
+  // const app = await NestFactory.create(AppModule, { httpsOptions });
+  const app = await NestFactory.create(AppModule);
 
   const configService: ConfigService = app.get(ConfigService);
 
