@@ -7,7 +7,7 @@ import { BaseAPIDocument } from '@root/appconfig/swagger.document';
 import * as cookieParser from 'cookie-parser';
 import { TransformInterceptor } from '@root/common/interfaces/transform.interceptor';
 import { HttpExceptionFilter } from '@root/common/filters/http-exception.filter';
-import fs from 'fs';
+import * as fs from 'fs';
 
 async function bootstrap() {
   // const customLogger = new CustomLogger();
