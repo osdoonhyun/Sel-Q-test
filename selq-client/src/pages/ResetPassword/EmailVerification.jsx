@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { Button, Col, Form, Row, Spinner } from 'react-bootstrap';
-import {
-  useSendEmailVerification,
-  useVerifyRegisteredEmail,
-} from '../../services/authHook/signUp';
+import { Col, Form, Row } from 'react-bootstrap';
 import { Controller, useForm } from 'react-hook-form';
+import { useCheckRegisteredEmail } from '../../hooks/common/useCheckRegisteredEmail';
+import { useSendVerificationCode } from '../../hooks/common/useSendVerificationCode';
+import { NextButton } from '../../styles/ButtonStyles';
+import LoadingSpinner from '../../components/LoadingSpinner';
 
 export default function EmailVerification({ onNext }) {
   const [checkBtnDisable, setCheckBtnDisable] = useState(true);
@@ -16,13 +16,13 @@ export default function EmailVerification({ onNext }) {
     mutateAsync: verifyEmail,
     isLoading: loadingVerifyEmail,
     error: errorVerifyEmail,
-  } = useVerifyRegisteredEmail();
+  } = useCheckRegisteredEmail();
 
   const {
     mutateAsync: sendEmail,
     isLoading: loadingSendEmail,
     error: errorSendEmail,
-  } = useSendEmailVerification();
+  } = useSendVerificationCode();
 
   const handleCheckButton = async () => {
     const inputEmail = getValues('email');
@@ -79,62 +79,30 @@ export default function EmailVerification({ onNext }) {
                 marginLeft: '10px',
               }}
             >
-              <Button
+              <NextButton
                 onClick={handleCheckButton}
-                variant='Light'
-                style={{
-                  backgroundColor: '#2f93ea',
-                  border: '1px solid #2f93ea',
-                  color: '#fff',
-                }}
                 disabled={checkBtnDisable}
               >
                 {loadingVerifyEmail ? (
-                  <div>
-                    <Spinner
-                      animation='border'
-                      size='sm'
-                      role='status'
-                      aria-hidden='true'
-                    />
-                    <span className='visually-hidden'>Loading...</span>
-                  </div>
+                  <LoadingSpinner />
                 ) : sendBtnDisable ? (
                   '확인'
                 ) : (
                   '확인완료'
                 )}
-              </Button>
+              </NextButton>
             </Col>
           </div>
         </Row>
       </Form.Group>
       <div className='d-flex justify-content-center'>
-        <Button
-          variant='Light'
-          style={{
-            backgroundColor: '#2f93ea',
-            border: '1px solid #2f93ea',
-            color: '#fff',
-          }}
+        <NextButton
           className='mt-3 w-100'
           type='submit'
           disabled={sendBtnDisable}
         >
-          {loadingSendEmail ? (
-            <>
-              <Spinner
-                animation='border'
-                size='sm'
-                role='status'
-                aria-hidden='true'
-              />
-              <span className='visually-hidden'>Loading...</span>
-            </>
-          ) : (
-            '이메일로 인증코드 보내기'
-          )}
-        </Button>
+          {loadingSendEmail ? <LoadingSpinner /> : '이메일로 인증코드 보내기'}
+        </NextButton>
       </div>
     </Form>
   );

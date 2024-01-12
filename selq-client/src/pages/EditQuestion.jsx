@@ -1,5 +1,5 @@
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-
 import { Controller, useForm } from 'react-hook-form';
 import {
   Badge,
@@ -11,11 +11,12 @@ import {
   Row,
   Stack,
 } from 'react-bootstrap';
-import { useQuestionDetailQuery } from '../services/api';
-import { CATEGORIES } from '../constant/categories';
-import { useEditQuestion } from '../services/questionHook/registerQuestion';
-import { useEffect, useState } from 'react';
-import useAuth from '../hooks/useAuth';
+import { useEditQuestion } from '../hooks/mutations/useEditQuestion';
+import { useQuestionDetailQuery } from '../hooks/queries/useGetQuestionDetailById';
+import { CATEGORIES, IMPORTANCES } from '../constant/options';
+import RequiredLabel from '../components/RequiredLabel';
+import { NextButton } from '../styles/ButtonStyles';
+import { MAIN, GREYS } from '../styles/variables';
 
 export default function EditQuestion() {
   const navigate = useNavigate();
@@ -25,15 +26,10 @@ export default function EditQuestion() {
   const [hintBtnDisable, setHintBtnDisable] = useState(true);
 
   const { data: question } = useQuestionDetailQuery(questionId);
-  const { token } = useAuth();
 
   const { handleSubmit, getValues, control, setValue } = useForm();
 
-  const {
-    mutateAsync: editQuestion,
-    isLoading: loadingEdit,
-    error: errorEdit,
-  } = useEditQuestion();
+  const { mutateAsync: editQuestion } = useEditQuestion();
 
   const handleAddHint = () => {
     if (newHint !== '') {
@@ -73,7 +69,7 @@ export default function EditQuestion() {
       updatedData.hints = [...hints];
     }
 
-    editQuestion({ editData: updatedData, questionId, token });
+    editQuestion({ editData: updatedData, questionId });
     navigate(-1);
   };
 
@@ -96,7 +92,8 @@ export default function EditQuestion() {
       <Form onSubmit={handleSubmit(editQuestionHandler)}>
         <Form.Group className='mb-3' controlId='exampleForm.ControlInput1'>
           <Form.Label>
-            질문<span style={{ position: 'relative', top: '-3px' }}>*</span>
+            질문
+            <RequiredLabel />
           </Form.Label>
           <Controller
             name='question'
@@ -123,7 +120,7 @@ export default function EditQuestion() {
             >
               <Form.Label>
                 중요도
-                <span style={{ position: 'relative', top: '-3px' }}>*</span>
+                <RequiredLabel />
               </Form.Label>
               <Controller
                 name='importance'
@@ -136,11 +133,11 @@ export default function EditQuestion() {
                     aria-label='Select Importance'
                   >
                     <option>중요도 선택</option>
-                    <option value='1'>1</option>
-                    <option value='2'>2</option>
-                    <option value='3'>3</option>
-                    <option value='4'>4</option>
-                    <option value='5'>5</option>
+                    {IMPORTANCES.map(({ level }, index) => (
+                      <option key={index} value={level}>
+                        {level}
+                      </option>
+                    ))}
                   </Form.Select>
                 )}
               />
@@ -150,7 +147,7 @@ export default function EditQuestion() {
             <Form.Group className='mb-3'>
               <Form.Label>
                 카테고리
-                <span style={{ position: 'relative', top: '-3px' }}>*</span>
+                <RequiredLabel />
               </Form.Label>
               <Controller
                 name='category'
@@ -193,29 +190,23 @@ export default function EditQuestion() {
                     />
                   </Col>
                   <Col>
-                    <Button
-                      variant='Light'
-                      style={{
-                        backgroundColor: '#2f93ea',
-                        border: '1px solid #2f93ea',
-                        color: '#fff',
-                      }}
+                    <NextButton
                       disabled={hintBtnDisable}
                       onClick={handleAddHint}
                     >
                       추가
-                    </Button>
+                    </NextButton>
                   </Col>
                 </Row>
                 <Stack className='mt-3' direction='horizontal' gap={2}>
                   {hints?.map((hint, index) => (
                     <Badge
-                      bg='#5bacee'
+                      bg={MAIN.MEDIUM}
                       style={{
                         fontSize: '0.8rem',
-                        color: '#fff',
+                        color: GREYS.LIGHTER,
                         letterSpacing: '0.1rem',
-                        backgroundColor: '#5bacee',
+                        backgroundColor: MAIN.MEDIUM,
                       }}
                       key={index}
                       className='d-flex justify-content-center align-items-center'
@@ -232,7 +223,8 @@ export default function EditQuestion() {
 
         <Form.Group className='mb-3' controlId='exampleForm.ControlInput1'>
           <Form.Label>
-            답변<span style={{ position: 'relative', top: '-3px' }}>*</span>
+            답변
+            <RequiredLabel />
           </Form.Label>
           <Controller
             name='answer'

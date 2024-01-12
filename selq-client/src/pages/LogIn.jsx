@@ -1,27 +1,31 @@
 import { useState } from 'react';
-import { Button, Col, Container, Form, Nav, Row } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { Col, Container, Form, Nav, Row } from 'react-bootstrap';
+import { useForm } from 'react-hook-form';
 import { logIn } from '../store/Slices/auth';
-import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
+import ErrorToast from '../components/ErrorToast';
+import SocialLogInButton from '../components/button/SocialLogInButton';
+import PasswordInputGroup from '../components/PasswordInputGroup';
 import { ErrorMessage } from '../styles/Styles';
-import ErrorToast from '../components/common/ErrorToast';
-import SocialGoogleLogIn from '../components/common/SocialGoogleLogIn';
+import { MAIN } from '../styles/variables';
+import { MESSAGE } from '../constant/message';
+import { NextButton } from '../styles/ButtonStyles';
 
 const loginSchema = yup.object({
   email: yup
     .string()
-    .email('올바른 이메일 형식이 아닙니다.')
-    .required('이메일을 입력해 주세요.'),
+    .email(MESSAGE.LOGIN.VALIDATION_EMAIL)
+    .required(MESSAGE.LOGIN.VALIDATION_EMAIL_REQUIRED),
   password: yup
     .string()
-    .required('비밀번호를 입력해 주세요.')
-    .min(8, '8자 이상 입력해 주세요.')
+    .required(MESSAGE.LOGIN.VALIDATION_PASSWORD_REQUIRED)
+    .min(8, MESSAGE.LOGIN.VALIDATION_PASSWORD_MIN)
     .matches(
       /^(?=.*[A-Z])(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/,
-      '최소 하나의 대문자, 특수문자를 포함해야 합니다.'
+      MESSAGE.LOGIN.VALIDATION_PASSWORD_MATCHES
     ),
 });
 
@@ -67,7 +71,7 @@ export default function LogIn() {
               style={{
                 fontSize: '2rem',
                 fontWeight: 500,
-                color: '#5bacee',
+                color: MAIN.MEDIUM,
               }}
               className='justify-content-center mb-4'
             >
@@ -82,11 +86,12 @@ export default function LogIn() {
                 placeholder='이메일'
               />
               <ErrorMessage>{errors.email?.message}</ErrorMessage>
-              <Form.Control
-                style={{ height: '50px', width: '330px' }}
-                {...register('password', { required: true })}
-                type='text'
+
+              <PasswordInputGroup
+                register={register}
+                name='password'
                 placeholder='비밀번호'
+                controlStyle={{ height: '50px' }}
               />
               <ErrorMessage>{errors.password?.message}</ErrorMessage>
             </Row>
@@ -94,32 +99,21 @@ export default function LogIn() {
 
           {/* {isLoading && <h1>...loading</h1>} */}
           <div className='d-flex justify-content-center mt-4'>
-            <Button
-              style={{
-                height: '55px',
-                width: '330px',
-                padding: '15px 10px',
-                backgroundColor: '#2f93ea',
-                border: '1px solid #2f93ea',
-                color: '#fff',
-              }}
-              variant='Light'
-              type='submit'
-            >
+            <NextButton $large type='submit'>
               로그인
-            </Button>
+            </NextButton>
           </div>
         </Form>
 
         <div className='d-flex justify-content-center mt-3'>
           <Nav as='ul'>
             <Nav.Item as='li'>
-              <Nav.Link style={{ color: '#5bacee' }} href='/password/new'>
+              <Nav.Link style={{ color: MAIN.MEDIUM }} href='/password/new'>
                 비밀번호 재설정
               </Nav.Link>
             </Nav.Item>
             <Nav.Item as='li'>
-              <Nav.Link style={{ color: '#5bacee' }} href='/signup'>
+              <Nav.Link style={{ color: MAIN.MEDIUM }} href='/signup'>
                 회원가입
               </Nav.Link>
             </Nav.Item>
@@ -136,7 +130,7 @@ export default function LogIn() {
         </Row>
 
         <Row className='justify-content-center mt-2 mx-1'>
-          <SocialGoogleLogIn />
+          <SocialLogInButton />
         </Row>
       </Container>
 

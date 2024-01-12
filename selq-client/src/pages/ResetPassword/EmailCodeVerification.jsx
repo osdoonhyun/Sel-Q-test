@@ -1,7 +1,9 @@
 import { useState } from 'react';
-import { Button, Col, Form, Row, Spinner } from 'react-bootstrap';
-import { useCheckEmailVerification } from '../../services/authHook/signUp';
+import { Col, Form, Row } from 'react-bootstrap';
 import { Controller, useForm } from 'react-hook-form';
+import { useCheckVerificationCode } from '../../hooks/common/useCheckVerificationCode';
+import { NextButton } from '../../styles/ButtonStyles';
+import LoadingSpinner from '../../components/LoadingSpinner';
 
 export default function EmailCodeVerification({ onNext, userEmail }) {
   const [checkBtnDisable, setCheckBtnDisable] = useState(true);
@@ -13,7 +15,7 @@ export default function EmailCodeVerification({ onNext, userEmail }) {
     mutateAsync: checkEmail,
     isLoading: loadingCheckEmail,
     error: errorCheckEmail,
-  } = useCheckEmailVerification();
+  } = useCheckVerificationCode();
 
   const handleCheckButton = async () => {
     const emailCode = getValues('emailCode');
@@ -67,32 +69,18 @@ export default function EmailCodeVerification({ onNext, userEmail }) {
                 marginLeft: '10px',
               }}
             >
-              <Button
-                variant='Light'
-                style={{
-                  backgroundColor: '#2f93ea',
-                  border: '1px solid #2f93ea',
-                  color: '#fff',
-                }}
+              <NextButton
                 onClick={handleCheckButton}
                 disabled={checkBtnDisable}
               >
                 {loadingCheckEmail ? (
-                  <>
-                    <Spinner
-                      animation='border'
-                      size='sm'
-                      role='status'
-                      aria-hidden='true'
-                    />
-                    <span className='visually-hidden'>Loading...</span>
-                  </>
+                  <LoadingSpinner />
                 ) : sendBtnDisable ? (
                   '확인'
                 ) : (
                   '확인완료'
                 )}
-              </Button>
+              </NextButton>
             </Col>
           </div>
           {/* 시간 카운트 */}
@@ -100,19 +88,13 @@ export default function EmailCodeVerification({ onNext, userEmail }) {
         </Row>
       </Form.Group>
       <div className='d-flex justify-content-center'>
-        <Button
-          variant='Light'
-          style={{
-            backgroundColor: '#2f93ea',
-            border: '1px solid #2f93ea',
-            color: '#fff',
-          }}
+        <NextButton
           className='mt-3 w-100'
           type='submit'
           disabled={sendBtnDisable}
         >
           비밀번호 재설정하기
-        </Button>
+        </NextButton>
       </div>
     </Form>
   );

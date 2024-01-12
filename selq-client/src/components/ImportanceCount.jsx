@@ -1,7 +1,7 @@
+import { IMPORTANCE_OPTIONS } from '../constant/options';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar as faStarSolid } from '@fortawesome/free-solid-svg-icons';
 import { faStar as faStarRegular } from '@fortawesome/free-regular-svg-icons';
-import { IMPORTANCE_OPTIONS } from '../constant/options';
 
 export default function ImportanceCount({ importance }) {
   const MAX_LEVEL = IMPORTANCE_OPTIONS.length - 1;

@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import {
   Badge,
-  Button,
   CloseButton,
   Col,
   Container,
@@ -9,9 +8,13 @@ import {
   Row,
   Stack,
 } from 'react-bootstrap';
-import { CATEGORIES } from '../../constant/categories';
+import useDebounce from '../../hooks/common/useDebounce';
+import { MAIN, GREYS } from '../../styles/variables';
+import { NextButton } from '../../styles/ButtonStyles';
+import RequiredLabel from '../../components/RequiredLabel';
+import { CATEGORIES, IMPORTANCES } from '../../constant/options';
 
-export default function QuestionInput({ onNext }) {
+export default function QuestionInput({ autoLoad, onNext }) {
   const [questionFormData, setQuestionFormData] = useState({
     question: '',
     importance: 0,
@@ -21,6 +24,8 @@ export default function QuestionInput({ onNext }) {
   });
   const [hintBtnDisable, setHintBtnDisable] = useState(true);
   const [nextBtnDisable, setNextBtnDisable] = useState(true);
+
+  const debounceFormData = useDebounce(questionFormData);
 
   const postingQuestion = (e) => {
     e.preventDefault();
@@ -50,6 +55,25 @@ export default function QuestionInput({ onNext }) {
     });
   };
 
+  const saveDataToLocalStorage = (dataType, data) => {
+    localStorage.setItem(dataType, JSON.stringify(data));
+  };
+
+  // 작성중이던 데이터 불러오기
+  useEffect(() => {
+    const storedQuestionForm = localStorage.getItem('question');
+
+    if (autoLoad && storedQuestionForm) {
+      setQuestionFormData(JSON.parse(storedQuestionForm));
+    }
+  }, [autoLoad]);
+
+  // 임시 자동저장
+  useEffect(() => {
+    saveDataToLocalStorage('question', debounceFormData);
+  }, [debounceFormData]);
+
+  // 힌트 버튼 활성화 관련 Effect
   useEffect(() => {
     if (questionFormData.hint !== '') {
       setHintBtnDisable(false);
@@ -58,6 +82,7 @@ export default function QuestionInput({ onNext }) {
     }
   }, [questionFormData.hint]);
 
+  // 다음 버튼 활성화 관련 Effect
   useEffect(() => {
     if (
       questionFormData.question !== '' &&
@@ -76,7 +101,7 @@ export default function QuestionInput({ onNext }) {
         <Form.Group className='mb-3' controlId='exampleForm.ControlInput1'>
           <Form.Label>
             질문
-            <span style={{ position: 'relative', top: '-3px' }}>*</span>
+            <RequiredLabel />
           </Form.Label>
 
           <Form.Control
@@ -84,7 +109,8 @@ export default function QuestionInput({ onNext }) {
             as='textarea'
             type='text'
             placeholder='질문을 등록하세요.'
-            value={questionFormData.question}
+            defaultValue={questionFormData.question}
+            // value={questionFormData.question}
             onChange={(e) =>
               setQuestionFormData({
                 ...questionFormData,
@@ -94,9 +120,10 @@ export default function QuestionInput({ onNext }) {
           />
         </Form.Group>
 
-        <Form.Group className='mb-3' controlId='exampleForm.ControlTextarea1'>
+        <Form.Group className='mb-3'>
           <Form.Label>
-            중요도<span style={{ position: 'relative', top: '-3px' }}>*</span>
+            중요도
+            <RequiredLabel />
           </Form.Label>
           <Form.Select
             value={questionFormData.importance}
@@ -109,17 +136,18 @@ export default function QuestionInput({ onNext }) {
             aria-label='Select Importance'
           >
             <option>중요도 선택</option>
-            <option value='1'>1</option>
-            <option value='2'>2</option>
-            <option value='3'>3</option>
-            <option value='4'>4</option>
-            <option value='5'>5</option>
+            {IMPORTANCES.map(({ level }, index) => (
+              <option key={index} value={level}>
+                {level}
+              </option>
+            ))}
           </Form.Select>
         </Form.Group>
 
         <Form.Group className='mb-3'>
           <Form.Label>
-            카테고리<span style={{ position: 'relative', top: '-3px' }}>*</span>
+            카테고리
+            <RequiredLabel />
           </Form.Label>
           <Form.Select
             value={questionFormData.category}
@@ -157,29 +185,20 @@ export default function QuestionInput({ onNext }) {
               />
             </Col>
             <Col>
-              <Button
-                variant='Light'
-                style={{
-                  backgroundColor: '#2f93ea',
-                  border: '1px solid #2f93ea',
-                  color: '#fff',
-                }}
-                disabled={hintBtnDisable}
-                onClick={handleAddHint}
-              >
+              <NextButton disabled={hintBtnDisable} onClick={handleAddHint}>
                 추가
-              </Button>
+              </NextButton>
             </Col>
           </Row>
           <Stack className='mt-3' direction='horizontal' gap={2}>
             {questionFormData.hints?.map((hint, index) => (
               <Badge
-                bg='#5bacee'
+                bg={MAIN.MEDIUM}
                 style={{
                   fontSize: '0.8rem',
-                  color: '#fff',
+                  color: GREYS.LIGHTER,
                   letterSpacing: '0.1rem',
-                  backgroundColor: '#5bacee',
+                  backgroundColor: MAIN.MEDIUM,
                 }}
                 key={index}
                 className='d-flex justify-content-center align-items-center'
@@ -191,18 +210,9 @@ export default function QuestionInput({ onNext }) {
           </Stack>
         </Form.Group>
 
-        <Button
-          style={{
-            backgroundColor: '#2f93ea',
-            border: '1px solid #2f93ea',
-            color: '#fff',
-          }}
-          disabled={nextBtnDisable}
-          variant='Light'
-          type='submit'
-        >
+        <NextButton disabled={nextBtnDisable} type='submit'>
           다음
-        </Button>
+        </NextButton>
       </Form>
       <br />
     </Container>

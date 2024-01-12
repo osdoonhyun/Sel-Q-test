@@ -4,6 +4,12 @@ export const USER_FILTER_OPTIONS = [
   { label: '권한', option1: '유저', option2: '관리자' },
 ];
 
+export const QUESTION_FILTER_OPTIONS = [
+  { label: '카테고리' },
+  { label: '중요도' },
+  { label: '날짜' },
+];
+
 export const IMPORTANCE_FILTER_OPTION = [
   {
     label: '중요도',

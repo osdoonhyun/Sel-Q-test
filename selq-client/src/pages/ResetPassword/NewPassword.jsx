@@ -1,22 +1,28 @@
-import { Button, Col, Form, Row } from 'react-bootstrap';
+import { Col, Form, Row } from 'react-bootstrap';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { ErrorMessage } from '../../styles/Styles';
+import { MESSAGE } from '../../constant/message';
+import { REGEXP } from '../../constant/regexp';
+import { NextButton } from '../../styles/ButtonStyles';
 
 const newPasswordSchema = yup.object({
   password: yup
     .string()
-    .required('새 비밀번호를 입력해 주세요.')
-    .min(8, '8자 이상 입력해 주세요.')
+    .required(MESSAGE.RESET_PASSWORD.VALIDATION_PASSWORD)
+    .min(8, MESSAGE.RESET_PASSWORD.VALIDATION_PASSWORD_MIN)
     .matches(
-      /^(?=.*[A-Z])(?=.*[!@#$%^&*(),.?":{}|<>])(?=.*[0-9]).{8,}$/,
-      '최소 하나의 대문자, 특수문자, 숫자를 포함해야 합니다.'
+      REGEXP.PASSWORD,
+      MESSAGE.RESET_PASSWORD.VALIDATION_PASSWORD_MATCHES
     ),
   confirmPassword: yup
     .string()
-    .oneOf([yup.ref('password'), null], '비밀번호가 일치하지 않습니다.')
-    .required('새 비밀번호 확인을 입력해 주세요.'),
+    .oneOf(
+      [yup.ref('password'), null],
+      MESSAGE.RESET_PASSWORD.VALIDATION_CONFIRM_PASSWORD
+    )
+    .required(MESSAGE.RESET_PASSWORD.VALIDATION_CONFIRM_PASSWORD_REQUIRED),
 });
 
 export default function NewPassword() {
@@ -50,6 +56,7 @@ export default function NewPassword() {
                 style={{ height: '50px', width: '330px' }}
                 value={field.value}
                 placeholder='새 비밀번호'
+                type='password'
                 onChange={(e) => {
                   setValue('password', e.target.value);
                   field.onChange(e);
@@ -71,7 +78,7 @@ export default function NewPassword() {
                   setValue('confirmPassword', e.target.value);
                   field.onChange(e);
                 }}
-                // type='password'
+                type='password'
                 placeholder='새 비밀번호 확인'
               />
             )}
@@ -81,20 +88,9 @@ export default function NewPassword() {
       </Form.Group>
 
       <div className='d-flex justify-content-center mt-4'>
-        <Button
-          variant='Light'
-          style={{
-            height: '55px',
-            width: '330px',
-            padding: '15px 10px',
-            backgroundColor: '#2f93ea',
-            border: '1px solid #2f93ea',
-            color: '#fff',
-          }}
-          type='submit'
-        >
+        <NextButton $large type='submit'>
           비밀번호 변경하기
-        </Button>
+        </NextButton>
       </div>
     </Form>
   );

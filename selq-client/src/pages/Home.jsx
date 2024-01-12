@@ -1,16 +1,16 @@
 import { useCallback, useEffect, useState } from 'react';
-import Question from '../components/Question';
-import RandomQuestion from '../components/RandomQuestion';
-import Hint from '../components/common/Hint';
-import Answer from '../components/common/Answer';
-import { useQuestionsQuery } from '../services/api';
+import { useGetQuestionsByCategory } from '../hooks/queries/useGetQuestionsByCategory';
+import Question from '../components/question/Question';
+import RandomQuestion from '../components/question/RandomQuestion';
+import Hint from '../components/Hint';
+import Answer from '../components/Answer';
 
 export default function Home() {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [prevIndex, setPrevIndex] = useState(-1);
   const [randomQuestion, setRandomQuestion] = useState({});
 
-  const { data: questions } = useQuestionsQuery({
+  const { data: questions } = useGetQuestionsByCategory({
     category: selectedCategory,
   });
 
@@ -37,12 +37,7 @@ export default function Home() {
   }, [questions]);
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-      }}
-    >
+    <div className='d-flex flex-column'>
       <RandomQuestion
         selectedCategory={selectedCategory}
         getNextQuestion={getRandomQuestion}

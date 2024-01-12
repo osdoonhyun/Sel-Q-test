@@ -1,22 +1,22 @@
 import { Fragment, useState } from 'react';
-import CustomBadge from '../components/ui/CustomBadge';
 import { LinkContainer } from 'react-router-bootstrap';
-import CategoryCarousel from '../components/ui/CategoryCarousel';
 import { useFontSize } from '../context/FontSizingProvider';
+import { useGetQuestions } from '../hooks/queries/useGetQuestions';
+import CustomBadge from '../components/CustomBadge';
+import CategoryCarousel from '../components/CategoryCarousel';
 import { QuestionQ, QuestionTitle } from '../styles/Styles';
-import { useAllQuestionsQuery } from '../services/api';
 
 export default function CategoryQuestions() {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const { fontSizing, calcFontSize } = useFontSize();
 
-  const { data: questions } = useAllQuestionsQuery();
+  const { data: questions } = useGetQuestions();
 
   const handleCategoryClick = (category) => {
     setSelectedCategory(category);
   };
 
-  const filteredQuestions = questions?.data?.filter(
+  const filteredQuestions = questions?.filter(
     (question) =>
       selectedCategory === 'all' || question.category === selectedCategory
   );
@@ -24,7 +24,7 @@ export default function CategoryQuestions() {
   return (
     <>
       <CategoryCarousel
-        questions={questions?.data}
+        questions={questions}
         onClickCategory={handleCategoryClick}
         selectedCategory={selectedCategory}
       />
@@ -44,7 +44,7 @@ export default function CategoryQuestions() {
               </QuestionQ>
               <QuestionTitle
                 size={calcFontSize('1.6rem', fontSizing)}
-                mb='0.5rem'
+                $mbottom='0.5rem'
                 cursor={'pointer'}
               >
                 {question.question}

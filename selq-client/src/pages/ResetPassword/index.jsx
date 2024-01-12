@@ -1,10 +1,9 @@
 import { useState } from 'react';
-import EmailVerification from './EmailVerification';
-import NewPassword from './NewPassword';
-import axios from 'axios';
-import LogIn from '../LogIn';
-import EmailCodeVerification from './EmailCodeVerification';
 import { Container } from 'react-bootstrap';
+import LogIn from '../LogIn';
+import NewPassword from './NewPassword';
+import EmailVerification from './EmailVerification';
+import EmailCodeVerification from './EmailCodeVerification';
 
 export default function ResetPassword() {
   const [step, setStep] = useState('이메일검증');
@@ -29,7 +28,7 @@ export default function ResetPassword() {
       {step === '비밀번호변경' && (
         <NewPassword
           onNext={async () => {
-            await axios.post('/api/'); // 비밀번호 변경 API 호출
+            // 비밀번호 변경 API 호출
             setStep('변경성공');
           }}
         />
